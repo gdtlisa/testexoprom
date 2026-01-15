@@ -20,6 +20,7 @@
             display: flex; justify-content: center; min-height: 100vh;
         }
 
+        /* Écran de verrouillage - CORRIGÉ */
         #login-screen {
             position: fixed; inset: 0; background: var(--navy);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -39,7 +40,7 @@
 
         h2 { color: var(--navy); border-left: 5px solid var(--teal); padding-left: 15px; }
 
-        /* Frise */
+        /* Frise de progression */
         .frise {
             display: flex; margin-bottom: 40px; border-radius: 10px; overflow: hidden;
             height: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -51,7 +52,7 @@
         }
         .frise-step.active { opacity: 1; }
 
-        /* Grilles */
+        /* Grilles et Boutons */
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
         .card {
             background: #fff; border: 2px solid #eee; padding: 25px;
@@ -61,7 +62,7 @@
         .card:hover { transform: translateY(-5px); border-color: var(--teal); }
         .card.selected { background: var(--teal) !important; color: white !important; border-color: var(--navy); }
 
-        /* Blocs */
+        /* Blocs de prompt (Etape 3 & 4) */
         .prompt-blocks { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; }
         .block-wrapper { display: flex; flex-direction: column; align-items: center; width: 200px; }
         .block-box {
@@ -74,11 +75,12 @@
             resize: none; font-family: inherit; font-size: 0.8rem; text-align: center;
         }
 
-        /* Quiz Bulles */
+        /* Quiz Bulles (Etape 6) */
         .bubble {
             background: var(--gray-bubble); padding: 20px; border-radius: 20px 20px 20px 5px;
             position: relative; margin-bottom: 10px; transition: 0.4s;
         }
+        /* Feedback visuel précis */
         .bubble.correct-glow { border: 3px solid var(--green); background: #f0fdf4; }
         .bubble.wrong-glow { border: 3px solid var(--red); background: #fef2f2; }
         
@@ -96,6 +98,7 @@
         .check-item.correct-match { background: #dcfce7; border-color: var(--green); color: #166534; }
         .check-item.wrong-match { background: #fee2e2; border-color: var(--red); color: #991b1b; }
 
+        /* Navigation */
         .nav-btns { display: flex; justify-content: space-between; margin-top: 40px; }
         button.primary {
             background: var(--navy); color: white; border: none; padding: 12px 30px;
@@ -112,7 +115,7 @@
 
 <div id="login-screen">
     <h1>Accès Sécurisé</h1>
-    <input type="password" id="pass" placeholder="Mot de passe : Atprom.2026.2">
+    <input type="password" id="pass" placeholder="Entrez le mot de passe...">
     <button class="primary" onclick="checkPass()">Se connecter</button>
 </div>
 
@@ -187,6 +190,7 @@
     let step6Verified = false;
     let step8Verified = false;
 
+    // Données des techniques et corrections
     const techniquesData = {
         1: ["Animal", "Métier", "Objet", "Couleur", "Musique", "Verbe"],
         2: ["Objet", "Couleur", "Musique", "Verbe"],
@@ -252,7 +256,6 @@
         document.querySelectorAll('.t-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
         
-        // Prepare steps 3 & 4
         const inputDiv = document.getElementById('input-blocks');
         const corrDiv = document.getElementById('correction-blocks');
         inputDiv.innerHTML = ''; corrDiv.innerHTML = '';
@@ -270,7 +273,7 @@
         else if(currentStep === 2) valid = selectedTechnique !== null;
         else if(currentStep === 3) {
             const txs = document.querySelectorAll('#input-blocks textarea');
-            valid = Array.from(txs).every(t => t.value.trim().length > 2);
+            valid = txs.length > 0 && Array.from(txs).every(t => t.value.trim().length > 2);
         }
         else if(currentStep === 4 || currentStep === 5 || currentStep === 7) valid = true;
         else if(currentStep === 6) valid = step6Verified;
