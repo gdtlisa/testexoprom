@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --navy: #0a194e; --yellow: #fcd45c; --teal: #227c7d; 
-            --pink: #e91e9e; --green: #a6e27e; --red: #ff4d4d;
+            --navy: #041b52; --yellow: #ffde59; --teal: #247b7b; 
+            --pink: #e413A9; --green: #b1e989; --red: #ff4d4d;
             --light-teal: #8ec5c6; --light-pink: #f4a7d6; --light-yellow: #fef08a;
             --gray-bubble: #e5e7eb;
         }
@@ -97,6 +97,7 @@
         }
         .check-item.correct-match { background: #dcfce7; border-color: var(--green); color: #166534; }
         .check-item.wrong-match { background: #fee2e2; border-color: var(--red); color: #991b1b; }
+
 
         /* Navigation */
         .nav-btns { display: flex; justify-content: space-between; margin-top: 40px; }
@@ -359,7 +360,7 @@
                     if(isTechniqueValidForProb) label.classList.add('correct-match');
                     else { label.classList.add('wrong-match'); pCorrect = false; }
                 } else {
-                    if(isTechniqueValidForProb) { label.style.border = "2px dashed var(--red)"; pCorrect = false; }
+                    if(isTechniqueValidForProb) { label.style.border = "2px dashed var(--green)"; pCorrect = false; }
                 }
             });
             if(pCorrect) score++;
