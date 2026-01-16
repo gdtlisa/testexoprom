@@ -80,6 +80,13 @@
             background: var(--gray-bubble); padding: 20px; border-radius: 20px 20px 20px 5px;
             position: relative; margin-bottom: 10px; transition: 0.4s;
         }
+        .quiz-instruction { font-weight: bold; margin: 25px 0 10px 0; color: var(--navy); font-size: 1.1rem; }
+.chat-group { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px; justify-content: center; }
+.bubble.quiz-choice { cursor: pointer; transition: 0.3s; border: 2px solid transparent; margin-bottom: 0; }
+.bubble.quiz-choice:hover { transform: scale(1.05); background: #d1d5db; }
+/* Style quand une bulle est sélectionnée */
+.bubble.quiz-choice.selected-bubble { border-color: var(--teal); background: #e0f2f1; box-shadow: 0 0 10px rgba(34, 124, 125, 0.2); }
+        
         /* Feedback visuel précis */
         .bubble.correct-glow { border: 3px solid var(--green); background: #f0fdf4; }
         .bubble.wrong-glow { border: 3px solid var(--red); background: #fef2f2; }
@@ -156,11 +163,27 @@
     </section>
 
     <section id="step6" class="hidden">
-        <h2>6. Évaluation des messages</h2>
-        <div class="grid-3" id="chat-quiz" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));"></div>
-        <button class="primary" style="margin: 20px auto; display: block;" onclick="validateStep6()">Vérifier les messages</button>
-        <div id="score6" class="result-box"></div>
-    </section>
+    <h2>6. Évaluation des messages</h2>
+    
+    <div id="chat-quiz-container">
+        <p class="quiz-instruction">Phrase 1</p>
+        <div class="chat-group" id="group1">
+            <div class="bubble quiz-choice" onclick="selectChoice(1, 0)">Je suis un loup</div>
+            <div class="bubble quiz-choice" onclick="selectChoice(1, 1)">Je suis une chèvre</div>
+            <div class="bubble quiz-choice" onclick="selectChoice(1, 2)">Je suis un chien</div>
+        </div>
+
+        <p class="quiz-instruction">Phrase 2</p>
+        <div class="chat-group" id="group2">
+            <div class="bubble quiz-choice" onclick="selectChoice(2, 0)">Je suis un castor</div>
+            <div class="bubble quiz-choice" onclick="selectChoice(2, 1)">Je suis un mouton</div>
+            <div class="bubble quiz-choice" onclick="selectChoice(2, 2)">Je suis une vache</div>
+        </div>
+    </div>
+
+    <button class="primary" style="margin: 20px auto; display: block;" onclick="validateStep6()">Vérifier les messages</button>
+    <div id="score6" class="result-box"></div>
+</section>
 
     <section id="step7" class="hidden">
         <h2>7. Classification</h2>
@@ -298,37 +321,55 @@
         checkValidation();
     }
 
-    function renderChat() {
-        const container = document.getElementById('chat-quiz');
-        container.innerHTML = chatData.map((m, i) => `
-            <div>
-                <div class="bubble" id="bubble-${i}">${m.t}</div>
-                <div class="btn-check-group">
-                    <button class="btn-verify" id="c${i}" onclick="setChatAns(${i}, true)">Correct</button>
-                    <button class="btn-verify" id="i${i}" onclick="setChatAns(${i}, false)">Incorrect</button>
-                </div>
-            </div>`).join('');
-    }
+    let selections = { group1: null, group2: null };
 
-    function setChatAns(idx, val) {
-        chatAnswers[idx] = val;
-        document.getElementById('c'+idx).className = val ? 'btn-verify active-correct' : 'btn-verify';
-        document.getElementById('i'+idx).className = !val ? 'btn-verify active-incorrect' : 'btn-verify';
-        if(Object.keys(chatAnswers).length === 7) checkValidation();
-    }
+// Fonction pour sélectionner une bulle
+function selectChoice(groupId, choiceIdx) {
+    selections['group' + groupId] = choiceIdx;
+    
+    // Mise à jour visuelle des bulles du groupe
+    const bubbles = document.querySelectorAll(`#group${groupId} .bubble`);
+    bubbles.forEach((b, i) => {
+        b.classList.toggle('selected-bubble', i === choiceIdx);
+    });
+    
+    // On vérifie si les deux groupes ont une sélection pour activer ou non le bouton
+    checkValidation();
+}
 
-    function validateStep6() {
-        let score = 0;
-        chatData.forEach((m, i) => {
-            const bubble = document.getElementById('bubble-'+i);
-            if(chatAnswers[i] === m.c) { score++; bubble.className = 'bubble correct-glow'; }
-            else { bubble.className = 'bubble wrong-glow'; }
+// Nouvelle validation pour l'étape 6
+function validateStep6() {
+    // Index des réponses correctes : 1 pour chèvre (G1), 2 pour vache (G2)
+    const correctAnswers = { group1: 1, group2: 2 }; 
+    let score = 0;
+
+    [1, 2].forEach(num => {
+        const groupKey = 'group' + num;
+        const bubbles = document.querySelectorAll(`#group${num} .bubble`);
+        
+        bubbles.forEach((b, i) => {
+            b.classList.remove('correct-glow', 'wrong-glow'); // Reset
+            
+            // Si c'est la bulle sélectionnée par l'utilisateur
+            if (i === selections[groupKey]) {
+                if (i === correctAnswers[groupKey]) {
+                    b.classList.add('correct-glow'); // Juste
+                    score++;
+                } else {
+                    b.classList.add('wrong-glow'); // Faux
+                }
+            }
         });
-        step6Verified = true;
-        document.getElementById('score6').style.display = 'block';
-        document.getElementById('score6').innerText = "Score : " + score + " / 7";
-        checkValidation();
-    }
+    });
+
+    step6Verified = true;
+    const scoreDiv = document.getElementById('score6');
+    scoreDiv.style.display = 'block';
+    scoreDiv.style.background = score === 2 ? '#dcfce7' : '#fee2e2';
+    scoreDiv.innerText = "Score : " + score + " / 2";
+    
+    checkValidation(); // Débloque le bouton "Suivant"
+}
 
     function renderMatch() {
         const container = document.getElementById('final-match');
