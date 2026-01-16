@@ -347,8 +347,8 @@ function selectChoice(groupId, choiceIdx) {
 }
 
 // Nouvelle validation pour l'étape 6
+
 function validateStep6() {
-    // Index des réponses correctes : 1 pour chèvre (G1), 2 pour vache (G2)
     const correctAnswers = { group1: 1, group2: 2 }; 
     let score = 0;
 
@@ -357,16 +357,21 @@ function validateStep6() {
         const bubbles = document.querySelectorAll(`#group${num} .bubble`);
         
         bubbles.forEach((b, i) => {
-            b.classList.remove('correct-glow', 'wrong-glow'); // Reset
+            // ÉTAPE CLÉ : On enlève le bleu de sélection avant d'afficher le résultat
+            b.classList.remove('selected-bubble', 'correct-glow', 'wrong-glow');
             
-            // Si c'est la bulle sélectionnée par l'utilisateur
+            // Si c'est la bulle que l'apprenant a choisie
             if (i === selections[groupKey]) {
                 if (i === correctAnswers[groupKey]) {
-                    b.classList.add('correct-glow'); // Juste
+                    b.classList.add('correct-glow'); // Choix juste
                     score++;
                 } else {
-                    b.classList.add('wrong-glow'); // Faux
+                    b.classList.add('wrong-glow'); // Choix faux
                 }
+            } 
+            // Optionnel : On affiche la réponse correcte en vert même s'il ne l'a pas choisie
+            else if (i === correctAnswers[groupKey]) {
+                b.classList.add('correct-glow');
             }
         });
     });
@@ -377,9 +382,8 @@ function validateStep6() {
     scoreDiv.style.background = score === 2 ? '#dcfce7' : '#fee2e2';
     scoreDiv.innerText = "Score : " + score + " / 2";
     
-    checkValidation(); // Débloque le bouton "Suivant"
+    checkValidation(); 
 }
-
     function renderMatch() {
         const container = document.getElementById('final-match');
         container.innerHTML = [1,2,3].map(p => `
