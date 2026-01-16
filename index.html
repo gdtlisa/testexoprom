@@ -88,8 +88,17 @@
 .bubble.quiz-choice.selected-bubble { border-color: var(--teal); background: #e0f2f1; box-shadow: 0 0 10px rgba(34, 124, 125, 0.2); }
         
         /* Feedback visuel précis */
-        .bubble.correct-glow { border: 3px solid var(--green); background: #f0fdf4; }
-        .bubble.wrong-glow { border: 3px solid var(--red); background: #fef2f2; }
+        /* Le !important force l'affichage du vert/rouge même si la bulle est sélectionnée */
+.bubble.correct-glow { 
+    border: 3px solid var(--green) !important; 
+    background: #f0fdf4 !important; 
+    color: #166534 !important;
+}
+.bubble.wrong-glow { 
+    border: 3px solid var(--red) !important; 
+    background: #fef2f2 !important; 
+    color: #991b1b !important;
+}
         
         .btn-check-group { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;}
         .btn-verify { padding: 8px 15px; border-radius: 20px; border: 1px solid #ccc; cursor: pointer; font-size: 0.8rem; background: white; transition: 0.2s;}
